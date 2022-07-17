@@ -12,7 +12,7 @@ pygame.display.set_icon(surface)
 fond = pygame.image.load("fond.jpg")"""
 run = True
 start = False
-snakeHeadCooX= 260
+snakeHeadCooX = 260
 snakeHeadCooY = 310
 currentTimer = 1
 snakeHead = Rect(snakeHeadCooX, snakeHeadCooY, 30, 30)
@@ -21,7 +21,8 @@ font = pygame.font.Font('freesansbold.ttf', 32)
 pygame.draw.rect(screen, (255, 0, 0), snakeHead)
 targetCooX = (random.randint(0, 10) * 50) + 25
 targetCooY = (random.randint(1, 11) * 50) + 25
-target = pygame.draw.circle(screen, (255, 255, 255), (targetCooX, targetCooY) , 15)
+target = pygame.draw.circle(screen, (255, 255, 255), (targetCooX, targetCooY), 15)
+score = 0
 
 timerEverySeconds = time.time()
 """
@@ -56,27 +57,24 @@ while run:
             snakeHeadCooX = snakeHeadCooX - 50
         if direction == "right":
             snakeHeadCooX = snakeHeadCooX + 50
-        print(snakeHeadCooY)
         """ if snake get out of the screen then you lose"""
         if snakeHeadCooX < 10 or snakeHeadCooX > 510 or snakeHeadCooY < 60 or snakeHeadCooY > 560:
             run = False
-            print("test")
 
         """ if the snake catch the target"""
-        if targetCooX-15 == snakeHeadCooX and targetCooY-15 == snakeHeadCooY:
-
+        if targetCooX - 15 == snakeHeadCooX and targetCooY - 15 == snakeHeadCooY:
+            score += 1
             targetCooX = (random.randint(0, 10) * 50) + 25
             targetCooY = (random.randint(1, 11) * 50) + 25
 
-
         timerEverySeconds = time.time()
-        screen.fill((0,0,0))
+        screen.fill((0, 0, 0))
         target = pygame.draw.circle(screen, (255, 255, 255), (targetCooX, targetCooY), 15)
         snakeHead = Rect(snakeHeadCooX, snakeHeadCooY, 30, 30)
         pygame.draw.rect(screen, (255, 0, 0), snakeHead)
-
-
-
+        font = pygame.font.SysFont(None, 24)
+        img = font.render('Score : '+ str(score), True, (255,255,255))
+        screen.blit(img, (20, 20))
     pygame.display.flip()
 
 pygame.quit()
