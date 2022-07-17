@@ -24,7 +24,6 @@ targetCooY = (random.randint(1, 11) * 50) + 25
 target = pygame.draw.circle(screen, (255, 255, 255), (targetCooX, targetCooY) , 15)
 
 timerEverySeconds = time.time()
-
 """
 Idées
 Accélération du timer régulièrement
@@ -46,10 +45,8 @@ while run:
                 direction = "down"
             if event.key == pygame.K_LEFT:
                 direction = "left"
-                snakeHeadCooX = snakeHeadCooX-1
             if event.key == pygame.K_RIGHT:
                 direction = "right"
-                snakeHeadCooX = snakeHeadCooX + 1
     if time.time() > timerEverySeconds + currentTimer and start is True:
         if direction == "down":
             snakeHeadCooY = snakeHeadCooY + 50
@@ -59,6 +56,18 @@ while run:
             snakeHeadCooX = snakeHeadCooX - 50
         if direction == "right":
             snakeHeadCooX = snakeHeadCooX + 50
+        print(snakeHeadCooY)
+        """ if snake get out of the screen then you lose"""
+        if snakeHeadCooX < 10 or snakeHeadCooX > 510 or snakeHeadCooY < 60 or snakeHeadCooY > 560:
+            run = False
+            print("test")
+
+        """ if the snake catch the target"""
+        if targetCooX-15 == snakeHeadCooX and targetCooY-15 == snakeHeadCooY:
+
+            targetCooX = (random.randint(0, 10) * 50) + 25
+            targetCooY = (random.randint(1, 11) * 50) + 25
+
 
         timerEverySeconds = time.time()
         screen.fill((0,0,0))
