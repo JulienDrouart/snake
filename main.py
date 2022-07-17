@@ -4,27 +4,25 @@ import time
 from pygame.locals import *
 
 pygame.init()
-screen = pygame.display.set_mode((550, 600))
-clock = pygame.time.Clock()
+screen = pygame.display.set_mode((1000, 800))
 pygame.display.set_caption('Snake')
-"""surface = pygame.image.load('logo.jpg')
-pygame.display.set_icon(surface)
-fond = pygame.image.load("fond.jpg")"""
+
 run = True
 start = False
 snakeHeadCooX = 260
 snakeHeadCooY = 310
-currentTimer = 1
-snakeHead = Rect(snakeHeadCooX, snakeHeadCooY, 30, 30)
 direction = "null"
 font = pygame.font.Font('freesansbold.ttf', 32)
+snakeHead = Rect(snakeHeadCooX, snakeHeadCooY, 30, 30)
 pygame.draw.rect(screen, (255, 0, 0), snakeHead)
-targetCooX = (random.randint(0, 10) * 50) + 25
-targetCooY = (random.randint(1, 11) * 50) + 25
+targetCooX = random.randint(0, 970)
+targetCooY = random.randint(1, 770)
 target = pygame.draw.circle(screen, (255, 255, 255), (targetCooX, targetCooY), 15)
 score = 0
+snakeBody = []
+clock = pygame.time.Clock()
+snake_speed = 7
 
-timerEverySeconds = time.time()
 """
 Idées
 Accélération du timer régulièrement
@@ -48,34 +46,34 @@ while run:
                 direction = "left"
             if event.key == pygame.K_RIGHT:
                 direction = "right"
-    if time.time() > timerEverySeconds + currentTimer and start is True:
+    if start is True:
         if direction == "down":
-            snakeHeadCooY = snakeHeadCooY + 50
+            snakeHeadCooY = snakeHeadCooY + snake_speed
         if direction == "up":
-            snakeHeadCooY = snakeHeadCooY - 50
+            snakeHeadCooY = snakeHeadCooY - snake_speed
         if direction == "left":
-            snakeHeadCooX = snakeHeadCooX - 50
+            snakeHeadCooX = snakeHeadCooX - snake_speed
         if direction == "right":
-            snakeHeadCooX = snakeHeadCooX + 50
+            snakeHeadCooX = snakeHeadCooX + snake_speed
+
         """ if snake get out of the screen then you lose"""
-        if snakeHeadCooX < 10 or snakeHeadCooX > 510 or snakeHeadCooY < 60 or snakeHeadCooY > 560:
+        if snakeHeadCooX < 0 or snakeHeadCooX > 970 or snakeHeadCooY < 0 or snakeHeadCooY > 770:
             run = False
 
         """ if the snake catch the target"""
-        if targetCooX - 15 == snakeHeadCooX and targetCooY - 15 == snakeHeadCooY:
+        if pygame.Rect.colliderect(target, snakeHead):
             score += 1
+            snakeBody.append((snakeHeadCooX, snakeHeadCooY))
             targetCooX = (random.randint(0, 10) * 50) + 25
             targetCooY = (random.randint(1, 11) * 50) + 25
+            snake_speed += 1
 
-        timerEverySeconds = time.time()
         screen.fill((0, 0, 0))
         target = pygame.draw.circle(screen, (255, 255, 255), (targetCooX, targetCooY), 15)
         snakeHead = Rect(snakeHeadCooX, snakeHeadCooY, 30, 30)
         pygame.draw.rect(screen, (255, 0, 0), snakeHead)
         font = pygame.font.SysFont(None, 24)
-        img = font.render('Score : '+ str(score), True, (255,255,255))
+        img = font.render('Score : ' + str(score), True, (255, 255, 255))
         screen.blit(img, (20, 20))
+    clock.tick(30)
     pygame.display.flip()
-
-pygame.quit()
-quit()
