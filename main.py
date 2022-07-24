@@ -9,8 +9,7 @@ screen = pygame.display.set_mode((1000, 800))
 pygame.display.set_caption('Snake')
 
 run = True
-start = False
-gameover = False
+start = gameover = False
 snakeHeadCooX = 260
 snakeHeadCooY = 310
 direction = "null"
@@ -25,7 +24,7 @@ pygame.draw.circle(screen, (255, 255, 0), (snakeHeadCooX + 22, snakeHeadCooY + 1
 score = 0
 snakeBody = []
 clock = pygame.time.Clock()
-snake_speed = 7.0
+snake_speed = 7
 snake_length = 1
 font = pygame.font.SysFont(None, 24)
 
@@ -45,8 +44,7 @@ while run:
                 if event.key == pygame.K_RETURN:
                     screen = pygame.display.set_mode((1000, 800))
                     run = True
-                    start = False
-                    gameover = False
+                    start = gameover = False
                     snakeHeadCooX = 260
                     snakeHeadCooY = 310
                     direction = "null"
@@ -61,13 +59,11 @@ while run:
                     score = 0
                     snakeBody = []
                     clock = pygame.time.Clock()
-                    snake_speed = 7.0
+                    snake_speed = 7
                     snake_length = 1
                     font = pygame.font.SysFont(None, 24)
                     clock.tick(60)
                     pygame.display.flip()
-
-
     else:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -97,7 +93,7 @@ while run:
 
             """ if snake get out of the screen then you lose"""
             if snakeHeadCooX < 0 or snakeHeadCooX > 970 or snakeHeadCooY < 0 or snakeHeadCooY > 770:
-                gameover = True
+                """gameover = True"""
 
             snakeBody.append([snakeHeadCooX, snakeHeadCooY])
             if len(snakeBody) > snake_length:
@@ -116,8 +112,13 @@ while run:
             pygame.draw.rect(screen, (255, 0, 0), snakeHead)
 
             img = font.render('Score : ' + str(score), True, (255, 255, 255))
-            for element in snakeBody:
-                pygame.draw.rect(screen, (255, 0, 0), [element[0], element[1], 30, 30])
+            i = 0
+            snakeBodyReversed = list(reversed(snakeBody))
+            for element in snakeBodyReversed:
+                i += 1
+                currentBodypart = pygame.draw.rect(screen, (255, 0, 0), [element[0], element[1], 30, 30])
+                if i > 6 and pygame.Rect.colliderect(currentBodypart, snakeHead):
+                    gameover = True
             pygame.draw.circle(screen, (255, 255, 0), (snakeHeadCooX + 7, snakeHeadCooY + 15), 5)
             pygame.draw.circle(screen, (255, 255, 0), (snakeHeadCooX + 22, snakeHeadCooY + 15), 5)
 
