@@ -1,7 +1,32 @@
 import pygame, sys
 import random
 import time
+import sqlite3
 from pygame.locals import *
+from sqlite3 import Error
+
+connection = sqlite3.connect('score.db')
+cursor = connection.cursor()
+create_table = "CREATE TABLE IF NOT EXISTS score (highscore int)"
+cursor.execute(create_table)
+
+def insertDatabase(score):
+    dbHighestScore = selectDatabase()
+    if score > dbHighestScore:
+        # create table in database
+        insert_query = "INSERT INTO score VALUES ("+str(score)+")"
+        cursor.execute(insert_query)
+        connection.commit()
+
+def selectDatabase():
+    result = 0
+    select_query = "SELECT MAX(highscore) FROM score"
+    cursor.execute(select_query)
+    result = cursor.fetchone()
+    highScore = result[0]
+    if str(highScore) == 'None':
+        highScore = 0
+    return highScore
 
 pygame.init()
 
@@ -27,21 +52,24 @@ clock = pygame.time.Clock()
 snake_speed = 7
 snake_length = 1
 font = pygame.font.SysFont(None, 24)
+highscore = selectDatabase()
 
 while run:
 
     while gameover:
         font = pygame.font.SysFont(None, 50)
-        end = font.render('Press Enter to restart game : ', True, (255, 255, 255))
+        end = font.render('Press Enter to restart game', True, (255, 255, 255))
         screen.blit(end, (50, 50))
         clock.tick(60)
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                insertDatabase(score)
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    insertDatabase(score)
                     screen = pygame.display.set_mode((1000, 800))
                     run = True
                     start = gameover = False
@@ -63,6 +91,7 @@ while run:
                     snake_length = 1
                     font = pygame.font.SysFont(None, 24)
                     clock.tick(60)
+                    highscore = selectDatabase()
                     pygame.display.flip()
     else:
         for event in pygame.event.get():
@@ -93,11 +122,12 @@ while run:
 
             """ if snake get out of the screen then you lose"""
             if snakeHeadCooX < 0 or snakeHeadCooX > 970 or snakeHeadCooY < 0 or snakeHeadCooY > 770:
-                """gameover = True"""
+                gameover = True
 
             snakeBody.append([snakeHeadCooX, snakeHeadCooY])
             if len(snakeBody) > snake_length:
                 del snakeBody[0]
+
             """ if the snake catch the target"""
             if pygame.Rect.colliderect(target, snakeHead):
                 score += 1
@@ -121,8 +151,9 @@ while run:
                     gameover = True
             pygame.draw.circle(screen, (255, 255, 0), (snakeHeadCooX + 7, snakeHeadCooY + 15), 5)
             pygame.draw.circle(screen, (255, 255, 0), (snakeHeadCooX + 22, snakeHeadCooY + 15), 5)
-
+            text2 = font.render('Highest Score : ' + str(highscore), True, (255, 255, 255))
             screen.blit(img, (20, 20))
+            screen.blit(text2, (800, 20))
 
     clock.tick(60)
     pygame.display.flip()
